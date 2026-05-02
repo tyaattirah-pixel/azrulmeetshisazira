@@ -1013,10 +1013,9 @@ window.addEventListener("load",loadWishes);
 
 /* ══ RSVP MODAL ══ */
 // ⚙️  CONFIGURE: paste your Google Form values here
-const RSVP_FORM_ID   = 'YOUR_FORM_ID_HERE';   // e.g. 1FAIpQLSxxxxxxxxxx
-const RSVP_ENTRY_NAME       = 'entry.000000000'; // Name field
-const RSVP_ENTRY_ATTENDANCE = 'entry.000000001'; // Hadir/Tidak field
-const RSVP_ENTRY_PAX        = 'entry.000000002'; // Bilangan pax field (optional)
+const RSVP_FORM_ID   = '1FAIpQLSdjfBvD_fLmnIy8DNuW7SvjEK48Gr3S0yCP5hBrl6Sn0vo_ew';
+const RSVP_ENTRY_NAME       = 'entry.XXXXXXXXXX'; // ← TUKAR: ID untuk 'Nama Tetamu'
+const RSVP_ENTRY_ATTENDANCE = 'entry.YYYYYYYYYY'; // ← TUKAR: ID untuk 'Kehadiran'
 
 let rsvpChoice = null;
 let rsvpPax = 1;
@@ -1059,14 +1058,12 @@ function submitRsvp(){
   nameField.style.borderColor='';
 
   const attendance = rsvpChoice==='hadir' ? 'Hadir' : 'Tidak Hadir';
-  const pax = rsvpChoice==='hadir' ? rsvpPax : 0;
 
   // Submit to Google Forms (no-cors — data goes to Sheet, no response needed)
   const url = `https://docs.google.com/forms/d/e/${RSVP_FORM_ID}/formResponse`;
   const body = new URLSearchParams();
   body.append(RSVP_ENTRY_NAME, name);
   body.append(RSVP_ENTRY_ATTENDANCE, attendance);
-  if(RSVP_ENTRY_PAX !== 'entry.000000002') body.append(RSVP_ENTRY_PAX, pax);
 
   fetch(url, { method:'POST', mode:'no-cors', body })
     .catch(()=>{}); // no-cors always "fails" in fetch — data still goes through
@@ -1112,16 +1109,6 @@ function submitRsvp(){
         <div class="rf-row">
           <label class="rf-label">NAMA PENUH</label>
           <input class="rf-input" id="rf-name" type="text" placeholder="Nama anda...">
-        </div>
-        <div class="rf-row">
-          <label class="rf-label" style="text-align:center;display:block;margin-bottom:8px;">BILANGAN KEHADIRAN</label>
-          <div class="rf-pax" id="rf-pax-btns">
-            <button class="rf-pax-btn on" onclick="setPax(1)">1</button>
-            <button class="rf-pax-btn" onclick="setPax(2)">2</button>
-            <button class="rf-pax-btn" onclick="setPax(3)">3</button>
-            <button class="rf-pax-btn" onclick="setPax(4)">4</button>
-            <button class="rf-pax-btn" onclick="setPax(5)">5+</button>
-          </div>
         </div>
         <button class="rsvp-submit" onclick="submitRsvp()">HANTAR MAKLUM BALAS</button>
       </div>
