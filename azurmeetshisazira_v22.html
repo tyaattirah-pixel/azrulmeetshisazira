@@ -834,21 +834,21 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 <div class="gl rev"></div>
 <p class="bt rev">Jika anda ingin menghadiahkan sesuatu, sila tempah terlebih dahulu supaya tidak bertindih. Terima kasih.</p>
 <div class="wgrid rev">
-  <div class="wcard" data-gift="Peralatan Rumah" onclick="bookGift('Peralatan Rumah',this)">
-    <div class="wimgw"><div class="wph"><span style="font-size:24px;">🏠</span><span>Peralatan Rumah</span></div></div>
-    <div class="wbody"><div class="wtit">PERALATAN RUMAH</div><div class="wsub">Kitchen / home</div><a class="wlnk" onclick="event.stopPropagation();return false;">&lt;Shopee link&gt;</a></div>
+  <div class="wcard" data-gift="Periuk Nasi" onclick="bookGift('Periuk Nasi',this)">
+    <div class="wimgw"><div class="wph"><span style="font-size:24px;">🍚</span><span>Periuk Nasi</span></div></div>
+    <div class="wbody"><div class="wtit">PERIUK NASI</div><div class="wsub">Dapur · 1 unit</div><a class="wlnk" href="https://my.shp.ee/u2BpvEQM" target="_blank" onclick="event.stopPropagation();">Lihat di Shopee</a></div>
   </div>
-  <div class="wcard" data-gift="Set Makan" onclick="bookGift('Set Makan',this)">
-    <div class="wimgw"><div class="wph"><span style="font-size:24px;">🍽</span><span>Set Makan</span></div></div>
-    <div class="wbody"><div class="wtit">SET MAKAN</div><div class="wsub">Dining / cookware</div><a class="wlnk" onclick="event.stopPropagation();return false;">&lt;Shopee link&gt;</a></div>
+  <div class="wcard" data-gift="Air Fryer" onclick="bookGift('Air Fryer',this)">
+    <div class="wimgw"><div class="wph"><span style="font-size:24px;">🍟</span><span>Air Fryer</span></div></div>
+    <div class="wbody"><div class="wtit">AIR FRYER</div><div class="wsub">Dapur · 1 unit</div><a class="wlnk" href="https://my.shp.ee/DjEmWV4T" target="_blank" onclick="event.stopPropagation();">Lihat di Shopee</a></div>
   </div>
-  <div class="wcard" data-gift="Honeymoon Fund" onclick="bookGift('Honeymoon Fund',this)">
-    <div class="wimgw"><div class="wph"><span style="font-size:24px;">✈</span><span>Honeymoon</span></div></div>
-    <div class="wbody"><div class="wtit">HONEYMOON FUND</div><div class="wsub">Perjalanan impian</div><a class="wlnk" onclick="event.stopPropagation();return false;">&lt;link&gt;</a></div>
+  <div class="wcard" data-gift="Microwave" onclick="bookGift('Microwave',this)">
+    <div class="wimgw"><div class="wph"><span style="font-size:24px;">📦</span><span>Microwave</span></div></div>
+    <div class="wbody"><div class="wtit">MICROWAVE</div><div class="wsub">Dapur · 1 unit</div><a class="wlnk" href="https://my.shp.ee/8zAcCV5y" target="_blank" onclick="event.stopPropagation();">Lihat di Shopee</a></div>
   </div>
-  <div class="wcard" data-gift="Peralatan Bilik" onclick="bookGift('Peralatan Bilik',this)">
-    <div class="wimgw"><div class="wph"><span style="font-size:24px;">🛏</span><span>Peralatan Bilik</span></div></div>
-    <div class="wbody"><div class="wtit">PERALATAN BILIK</div><div class="wsub">Bedding / bedroom</div><a class="wlnk" onclick="event.stopPropagation();return false;">&lt;Shopee link&gt;</a></div>
+  <div class="wcard" data-gift="Kitchen Cooker" onclick="bookGift('Kitchen Cooker',this)">
+    <div class="wimgw"><div class="wph"><span style="font-size:24px;">🍳</span><span>Kitchen Cooker</span></div></div>
+    <div class="wbody"><div class="wtit">KITCHEN COOKER</div><div class="wsub">Dapur · 1 unit</div><a class="wlnk" href="https://my.shp.ee/dGETvcEd" target="_blank" onclick="event.stopPropagation();">Lihat di Shopee</a></div>
   </div>
 </div>
 </section>
@@ -1011,9 +1011,13 @@ setInterval(()=>pwGo((pwCur+1)%4),4000);
 function bookGift(item,card){
   if(!confirm("Adakah anda ingin menempah hadiah ini?\n\n"+item))return;
   card.classList.add("booked");
+  const saved=JSON.parse(localStorage.getItem("bookedGifts")||"[]");
+  if(!saved.includes(item)){saved.push(item);localStorage.setItem("bookedGifts",JSON.stringify(saved));}
   window.open("https://docs.google.com/forms/d/e/1FAIpQLSdxGDNrb4qh5Z0HhJKBxhtt1uZLutuICnayzterx3wDG-IMEA/viewform?usp=pp_url&entry.1441408667="+encodeURIComponent(item),"_blank");
 }
 async function loadBookedGifts(){
+  const saved=JSON.parse(localStorage.getItem("bookedGifts")||"[]");
+  document.querySelectorAll(".wcard").forEach(card=>{if(saved.includes(card.dataset.gift))card.classList.add("booked");});
   try{
     const r=await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vQia8_7x4ARFg99JvfO3F60dLHW511JqrVm6EFnimjjNOkM2CihEOx4c-ROMYxkyCox7q4YFsWvYCK-/pub?output=csv");
     const t=await r.text();
