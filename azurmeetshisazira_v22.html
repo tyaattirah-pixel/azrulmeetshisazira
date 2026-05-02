@@ -1028,8 +1028,9 @@ function closeRsvp(){
   document.getElementById('rsvp-modal').classList.remove('open');
   document.body.style.overflow='';
 }
-document.getElementById('rsvp-modal').addEventListener('click',function(e){
-  if(e.target===this) closeRsvp();
+document.addEventListener('DOMContentLoaded',function(){
+  var m=document.getElementById('rsvp-modal');
+  if(m) m.addEventListener('click',function(e){ if(e.target===this) closeRsvp(); });
 });
 
 function rsvpChoose(choice){
@@ -1137,6 +1138,7 @@ function submitRsvp(){
     </div>
   </div>
 </div>
+
 
 </body>
 </html>
