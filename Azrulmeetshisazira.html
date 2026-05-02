@@ -711,7 +711,7 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
     </svg>
   </div>
   <p class="itx">وَكَانَةً — DENGAN IZIN ALLAH SWT, KAMI</p>
-  <p class="itx" style="font-family:'Cinzel',serif;font-size:clamp(11px,3.5vw,14px);color:#c9848a;letter-spacing:3px;margin:6px 0;">FADZIHAH ABD RANI SEKELUARGA</p>
+  <p class="itx" style="font-family:'Cinzel',serif;font-size:clamp(11px,3.5vw,14px);color:#c9848a;letter-spacing:3px;margin:6px 0;">FADZIHAH</p>
   <p class="isal">DAN SEISI KELUARGA DENGAN PENUH KESYUKURAN KE HADRAT ILAHI,<br>KAMI MENJEMPUT</p>
   <p class="itx">DATO' / DATIN / TUAN / PUAN / ENCIK / CIK</p>
   <p class="isal">Ke Majlis Perkahwinan Puteri Kami</p>
@@ -883,11 +883,12 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 </div><!-- end #content -->
 
 <script>
-const YT_LIST='RDVqLU4wPzDVg';
+const YT_VID='VqLU4wPzDVg',YT_LIST='RDVqLU4wPzDVg';
 let musicOn=false,opened=false;
 
 /* ── PAGE 2 OPEN ── */
 function openPage2(){
+  startMusic();
   const pc=document.getElementById('page-closed');
   pc.classList.add('out');
   setTimeout(()=>pc.style.display='none',950);
@@ -918,14 +919,13 @@ function openInvite(){
   const fb=document.getElementById('flyB');
   fb.classList.add('go');
   fb.addEventListener('animationend',()=>fb.style.display='none',{once:true});
-  startMusic();
   setTimeout(()=>goTo('s-invite'),300);
   setTimeout(initReveal,600);
 }
 
 /* ── MUSIC ── */
 function startMusic(){
-  document.getElementById('ytf').src='https://www.youtube.com/embed/videoseries?list='+YT_LIST+'&autoplay=1&loop=1&controls=0&enablejsapi=1';
+  document.getElementById('ytf').src='https://www.youtube.com/embed/'+YT_VID+'?autoplay=1&loop=1&playlist='+YT_VID+'&list='+YT_LIST+'&controls=0&rel=0';
   musicOn=true;
 }
 function toggleMusic(){
