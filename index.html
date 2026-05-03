@@ -691,17 +691,38 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 <div class="ibox rev">
   <div class="ic tl2"></div><div class="ic tr2"></div><div class="ic bl2"></div><div class="ic br2"></div>
   <div style="display:flex;justify-content:center;margin-bottom:16px;">
-    <img id="invite-ring-icon" style="width:110px;height:110px;object-fit:contain;opacity:.85;" alt="">
+    <svg width="148" height="128" viewBox="0 0 210 182" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:.78;">
+      <!-- Diamond octagonal crown -->
+      <polygon points="72,6 88,14 94,30 88,46 72,54 56,46 50,30 56,14" stroke="#c8a882" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+      <!-- Inner table -->
+      <polygon points="72,16 82,21 85,30 82,39 72,44 62,39 59,30 62,21" stroke="#c8a882" stroke-width="0.9" fill="none" opacity=".55"/>
+      <!-- Crown facet lines -->
+      <line x1="72" y1="6"  x2="72" y2="54" stroke="#c8a882" stroke-width="0.8" opacity=".5"/>
+      <line x1="50" y1="30" x2="94" y2="30" stroke="#c8a882" stroke-width="0.8" opacity=".5"/>
+      <line x1="56" y1="14" x2="88" y2="46" stroke="#c8a882" stroke-width="0.8" opacity=".4"/>
+      <line x1="88" y1="14" x2="56" y2="46" stroke="#c8a882" stroke-width="0.8" opacity=".4"/>
+      <!-- Setting bar -->
+      <rect x="61" y="54" width="22" height="7" rx="1" stroke="#c8a882" stroke-width="1.4" fill="none"/>
+      <!-- Prong lines to ring -->
+      <line x1="63" y1="61" x2="58" y2="73" stroke="#c8a882" stroke-width="1.3"/>
+      <line x1="83" y1="61" x2="88" y2="73" stroke="#c8a882" stroke-width="1.3"/>
+      <path d="M58,73 Q72,79 88,73" stroke="#c8a882" stroke-width="1.3" fill="none"/>
+      <!-- Left ring outer + inner band -->
+      <circle cx="72" cy="132" r="46" stroke="#c8a882" stroke-width="2.6" fill="none"/>
+      <circle cx="72" cy="132" r="38" stroke="#c8a882" stroke-width="1"   fill="none" opacity=".38"/>
+      <!-- Right ring outer + inner band -->
+      <circle cx="138" cy="132" r="46" stroke="#c8a882" stroke-width="2.6" fill="none"/>
+      <circle cx="138" cy="132" r="38" stroke="#c8a882" stroke-width="1"   fill="none" opacity=".38"/>
+    </svg>
   </div>
-  <p class="itx">ASALAMUALAIKUM </p>
-  <p DENGAN IZIN ALLAH SWT, KAMI </p>
-  <p class="itx" style="font-family:'Cinzel',serif;font-size:clamp(11px,3.5vw,14px);color:#c9848a;letter-spacing:3px;margin:6px 0;">FADZIHAH ABD RANI </p>
+  <p class="itx">وَكَانَةً — DENGAN IZIN ALLAH SWT, KAMI</p>
+  <p class="itx" style="font-family:'Cinzel',serif;font-size:clamp(11px,3.5vw,14px);color:#c9848a;letter-spacing:3px;margin:6px 0;">FADZIHAH</p>
   <p class="isal">DAN SEISI KELUARGA DENGAN PENUH KESYUKURAN KE HADRAT ILAHI,<br>KAMI MENJEMPUT</p>
   <p class="itx">DATO' / DATIN / TUAN / PUAN / ENCIK / CIK</p>
-  <p class="isal">KE MAJLIS PERKAHWINAN PUTERI KAMI</p>
+  <p class="isal">Ke Majlis Perkahwinan Puteri Kami</p>
   <div class="gl"></div>
   <p class="itx" style="font-style:normal;margin-top:11px;"><span class="inm">SITI AZIRA BINTI BABH</span></p>
-  <p style="color:#c9848a;font-style:italic;font-size:16px;margin:6px 0;">BERSAMA</p>
+  <p class="isal">bersama</p>
   <p class="itx" style="font-style:normal;"><span class="inm">MUHAMAD AZRUL BIN SHAIFULLIZAM</span></p>
 </div>
 </section>
@@ -1079,12 +1100,6 @@ async function loadWishes(){
 
 window.addEventListener("load",loadWishes);
 
-/* ── Copy logo ring image into jemputan section ── */
-document.addEventListener('DOMContentLoaded',function(){
-  var li=document.getElementById('logo-img');
-  var ri=document.getElementById('invite-ring-icon');
-  if(li&&ri)ri.src=li.src;
-});
 
 /* ══ RSVP MODAL ══ */
 // ⚙️  CONFIGURE: paste your Google Form values here
