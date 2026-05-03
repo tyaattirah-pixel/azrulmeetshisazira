@@ -639,7 +639,7 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
   <button class="sbtn music" id="mbtn" onclick="toggleMusic()"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
 </div>
 
-<iframe id="ytf" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;" allow="autoplay" src="about:blank" tabindex="-1" aria-hidden="true"></iframe>
+<div id="ytf" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;"></div>
 
 <!-- ══ PAGE 1: CLOSED DOOR ══ -->
 <div id="page-closed" onclick="openPage2()">
@@ -690,8 +690,32 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 <div class="gl rev"></div>
 <div class="ibox rev">
   <div class="ic tl2"></div><div class="ic tr2"></div><div class="ic bl2"></div><div class="ic br2"></div>
-  <div style="display:flex;justify-content:center;margin-bottom:16px;">
-    <img id="invite-ring-icon" style="width:88px;opacity:.78;" alt="rings">
+  <div style="display:flex;justify-content:center;margin-bottom:20px;">
+    <svg width="130" height="115" viewBox="0 0 200 175" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:.82;">
+      <!-- Diamond crown top -->
+      <polygon points="72,4 54,22 64,33 80,33 90,22" stroke="#c8a882" stroke-width="1.6" fill="#fdf6ef" stroke-linejoin="round"/>
+      <!-- Diamond crown facet lines -->
+      <line x1="72" y1="4" x2="72" y2="33" stroke="#c8a882" stroke-width="0.9" opacity=".7"/>
+      <line x1="54" y1="22" x2="90" y2="22" stroke="#c8a882" stroke-width="0.9" opacity=".7"/>
+      <line x1="54" y1="22" x2="64" y2="33" stroke="#c8a882" stroke-width="0.8" opacity=".6"/>
+      <line x1="90" y1="22" x2="80" y2="33" stroke="#c8a882" stroke-width="0.8" opacity=".6"/>
+      <line x1="72" y1="4" x2="64" y2="33" stroke="#c8a882" stroke-width="0.8" opacity=".5"/>
+      <line x1="72" y1="4" x2="80" y2="33" stroke="#c8a882" stroke-width="0.8" opacity=".5"/>
+      <!-- Setting / girdle bar -->
+      <rect x="61" y="33" width="22" height="7" rx="1" stroke="#c8a882" stroke-width="1.3" fill="#fdf6ef"/>
+      <!-- Prong lines to ring -->
+      <line x1="63" y1="40" x2="58" y2="52" stroke="#c8a882" stroke-width="1.3"/>
+      <line x1="81" y1="40" x2="86" y2="52" stroke="#c8a882" stroke-width="1.3"/>
+      <path d="M58,52 Q72,57 86,52" stroke="#c8a882" stroke-width="1.3" fill="none"/>
+      <!-- Left ring (engagement ring) outer -->
+      <circle cx="72" cy="118" r="54" stroke="#c8a882" stroke-width="2.2" fill="none"/>
+      <!-- Left ring inner band -->
+      <circle cx="72" cy="118" r="46" stroke="#c8a882" stroke-width="1" fill="none" opacity=".4"/>
+      <!-- Right ring (plain band) outer -->
+      <circle cx="128" cy="118" r="54" stroke="#c8a882" stroke-width="2.2" fill="none"/>
+      <!-- Right ring inner band -->
+      <circle cx="128" cy="118" r="46" stroke="#c8a882" stroke-width="1" fill="none" opacity=".4"/>
+    </svg>
   </div>
   <p class="itx">ASALAMUALAIKUM </p>
   <p DENGAN IZIN ALLAH SWT, KAMI </p>
@@ -868,7 +892,20 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 
 <script>
 const YT_VID='VqLU4wPzDVg';
-let musicOn=false,opened=false;
+let musicOn=false,opened=false,_ytPlayer=null,_ytReady=false,_ytQueued=false;
+
+/* Load YT IFrame API on page start — player created muted so mobile allows it */
+(function(){var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);})();
+function onYouTubeIframeAPIReady(){
+  _ytPlayer=new YT.Player('ytf',{
+    videoId:YT_VID,
+    playerVars:{autoplay:0,controls:0,loop:1,playlist:YT_VID,rel:0,playsinline:1,mute:1},
+    events:{onReady:function(){_ytReady=true;if(_ytQueued){_doPlay();} }}
+  });
+}
+function _doPlay(){
+  _ytPlayer.unMute();_ytPlayer.setVolume(80);_ytPlayer.playVideo();musicOn=true;
+}
 
 /* ── PAGE 2 OPEN ── */
 function openPage2(){
@@ -914,26 +951,17 @@ function openInvite(){
   fb.addEventListener('animationend',()=>fb.style.display='none',{once:true});
   setTimeout(()=>goTo('s-invite'),300);
   setTimeout(initReveal,600);
-  initInviteRingIcon();
 }
 
 /* ── MUSIC ── */
 function startMusic(){
-  const f=document.getElementById('ytf');
-  f.src='https://www.youtube.com/embed/'+YT_VID+'?autoplay=1&loop=1&playlist='+YT_VID+'&controls=0&rel=0&playsinline=1';
-  musicOn=true;
+  /* Called directly from user click — triggers unmute on mobile */
+  if(_ytReady){_doPlay();}else{_ytQueued=true;}
 }
 function toggleMusic(){
-  const f=document.getElementById('ytf');
-  if(musicOn){f.src='about:blank';musicOn=false;document.getElementById('mbtn').classList.add('off');}
-  else{startMusic();document.getElementById('mbtn').classList.remove('off');}
-}
-
-/* ── INVITE RING ICON: copy from logo ── */
-function initInviteRingIcon(){
-  var logo=document.getElementById('logo-img');
-  var icon=document.getElementById('invite-ring-icon');
-  if(logo&&icon)icon.src=logo.src;
+  if(!_ytPlayer)return;
+  if(musicOn){_ytPlayer.pauseVideo();musicOn=false;document.getElementById('mbtn').classList.add('off');}
+  else{_ytPlayer.unMute();_ytPlayer.playVideo();musicOn=true;document.getElementById('mbtn').classList.remove('off');}
 }
 
 /* ── REVEAL ── */
