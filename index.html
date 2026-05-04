@@ -1273,7 +1273,7 @@ function _parseCSV(raw){
       if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}else cur+=ch;
     }
     cols.push(cur.trim());
-    if(cols[0]&&cols[1])rows.push({name:cols[0].replace(/^"+|"+$/g,""),msg:cols[1].replace(/^"+|"+$/g,"")});
+    if(cols[1]&&cols[2])rows.push({name:cols[1].replace(/^"+|"+$/g,""),msg:cols[2].replace(/^"+|"+$/g,"")});
   });
   return rows;
 }
