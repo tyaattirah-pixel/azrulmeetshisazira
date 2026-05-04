@@ -395,6 +395,8 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 #wish-modal.open{display:flex;}
 .wish-textarea{resize:none;height:88px;}
 #book-success{display:none;text-align:center;padding:10px 0;}
+#wish-success{display:none;text-align:center;padding:10px 0;}
+#wish-success.show{display:block;}
 .book-success-icon{font-size:36px;margin-bottom:10px;}
 .book-success-title{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:#c9a84c;margin-bottom:8px;}
 .book-success-msg{font-size:12px;color:#6b4c4c;line-height:1.8;font-style:italic;}
@@ -780,17 +782,7 @@ function submitWish(){
   font-family:'Cinzel',serif;font-size:7px;letter-spacing:2px;
   color:rgba(201,168,76,.6);
 }
-.wish-live-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:#c9a84c;
-  box-shadow:0 0 0 0 rgba(201,168,76,.5);
-  animation:livePulse 2s ease-in-out infinite;
-}
-@keyframes livePulse{
-  0%{box-shadow:0 0 0 0 rgba(201,168,76,.5);}
-  70%{box-shadow:0 0 0 8px rgba(201,168,76,0);}
-  100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}
-}
+
 /* butterfly field */
 .wish-bf-field{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4;}
 @keyframes wbfFloat{
@@ -986,8 +978,11 @@ function submitWish(){
 <div class="gl rev"></div>
 <p class="bt rev" style="margin-bottom:20px;font-style:italic;opacity:.8;">Kata-kata indah dari orang tersayang ✨</p>
 <div id="wishCards" class="wish-cards-wrap"></div>
-<div class="wish-live rev"><div class="wish-live-dot"></div>KEMASKINI SETIAP 30 SAAT</div>
-<button class="goldbtn rev" onclick="openWishModal()" style="border:none;cursor:pointer;margin-top:20px;">✍️ TULIS UCAPAN</button>
+<button class="wish-refresh-btn rev" onclick="refreshWishes(this)" title="Muat semula ucapan">
+  <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+  MUAT SEMULA
+</button>
+<button class="goldbtn rev" onclick="openWishModal()" style="border:none;cursor:pointer;margin-top:20px;">TULIS UCAPAN</button>
 </section>
 
 <!-- Hadiah -->
@@ -1354,6 +1349,10 @@ function _renderWishes(rows){
 }
 
 /* ── fetch ── */
+function refreshWishes(btn){
+  if(btn){btn.classList.add('spinning');setTimeout(()=>btn.classList.remove('spinning'),700);}
+  loadWishes();
+}
 async function loadWishes(){
   try{
     const r=await fetch(WISH_CSV+"&_="+Date.now());
