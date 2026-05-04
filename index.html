@@ -600,72 +600,157 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
   font-size:14px;color:#6b4c4c;line-height:1.9;
 }
 
-/* ══ SELEMBAR KENANGAN — magical wish cards ══ */
-#s-kenangan{position:relative;overflow:hidden;}
-.wish-cards-wrap{position:relative;z-index:2;display:flex;flex-direction:column;gap:16px;padding:4px 2px 8px;}
+/* ══ SELEMBAR KENANGAN ══ */
+#s-kenangan{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,rgba(255,248,240,.97) 0%,rgba(253,245,235,.97) 55%,rgba(255,250,242,.97) 100%);
+}
+/* twinkling star field */
+.kstar{
+  position:absolute;border-radius:50%;
+  background:rgba(201,168,76,.75);
+  animation:kStarTwink var(--d,2s) ease-in-out infinite var(--dl,0s);
+  pointer-events:none;
+}
+@keyframes kStarTwink{
+  0%,100%{opacity:.15;transform:scale(.6);}
+  50%{opacity:1;transform:scale(1.3);}
+}
+/* cards container */
+.wish-cards-wrap{
+  position:relative;z-index:3;
+  display:flex;flex-direction:column;gap:18px;
+  padding:6px 2px 10px;
+}
+/* individual card */
 .wish-card{
-  background:rgba(255,255,255,.72);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:1px solid rgba(201,168,76,.28);
-  border-radius:16px;
-  padding:18px 20px 14px;
   position:relative;
-  box-shadow:0 4px 24px rgba(201,168,76,.10),0 1px 4px rgba(0,0,0,.06);
-  animation:wishFadeUp .7s ease both;
-  text-align:left;
+  background:linear-gradient(135deg,rgba(255,253,248,.92) 0%,rgba(255,250,240,.88) 100%);
+  border-radius:20px;
+  padding:0;
   overflow:hidden;
+  box-shadow:
+    0 2px 18px rgba(201,168,76,.13),
+    0 8px 32px rgba(0,0,0,.06),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  animation:wishCardIn .75s cubic-bezier(.22,.68,0,1.2) both;
+  transform-origin:center bottom;
 }
+/* animated gradient border via ::before */
 .wish-card::before{
-  content:'"';
-  position:absolute;top:-6px;left:12px;
-  font-family:'Great Vibes',cursive;
-  font-size:52px;color:rgba(201,168,76,.18);
-  line-height:1;pointer-events:none;
+  content:'';
+  position:absolute;inset:0;
+  border-radius:20px;
+  padding:1.5px;
+  background:linear-gradient(120deg,#e8c97a,#f0dda0,#c9a84c,#e8c97a,#f5e8b0);
+  background-size:250% 250%;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:destination-out;
+  mask-composite:exclude;
+  animation:borderShimmer 4s linear infinite;
+  pointer-events:none;
+  z-index:0;
 }
+@keyframes borderShimmer{to{background-position:250% 250%;}}
+/* shimmer sweep across card */
+.wish-card::after{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  animation:cardSweep 6s ease-in-out infinite;
+  pointer-events:none;z-index:1;
+  border-radius:20px;
+}
+@keyframes cardSweep{
+  0%{left:-70%;}
+  35%{left:130%;}
+  100%{left:130%;}
+}
+.wish-card-inner{
+  position:relative;z-index:2;
+  padding:20px 22px 16px;
+}
+/* big decorative quote */
+.wish-q{
+  position:absolute;top:6px;left:14px;
+  font-family:'Great Vibes',cursive;
+  font-size:64px;line-height:1;
+  background:linear-gradient(135deg,#e8c97a,#c9a84c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  opacity:.22;pointer-events:none;z-index:2;
+}
+.wish-card-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#e8c97a,#c9a84c);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:11px;font-weight:700;
+  color:#fff;margin-bottom:10px;
+  box-shadow:0 2px 8px rgba(201,168,76,.35);
+  flex-shrink:0;
+}
+.wish-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .wish-card-name{
   font-family:'Cinzel',serif;
-  font-size:8.5px;letter-spacing:2.5px;
-  color:#c9a84c;margin-bottom:7px;
-  display:flex;align-items:center;gap:6px;
+  font-size:8px;letter-spacing:3px;
+  color:#b8913a;
+  text-transform:uppercase;
 }
-.wish-card-name::after{content:'✦';font-size:7px;opacity:.6;}
+.wish-divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent);
+  margin:0 0 12px;
+}
 .wish-card-msg{
   font-family:'EB Garamond',serif;
-  font-style:italic;font-size:13.5px;
-  color:#5c3d3d;line-height:1.75;
+  font-style:italic;font-size:14px;
+  color:#5c3d3d;line-height:1.85;
+  letter-spacing:.2px;
 }
-.wish-card-sparkle{
-  position:absolute;bottom:10px;right:14px;
-  font-size:11px;opacity:.45;
-  animation:sparkPulse 2.4s ease-in-out infinite;
+.wish-card-foot{
+  display:flex;justify-content:flex-end;margin-top:10px;gap:4px;
 }
-@keyframes wishFadeUp{
-  0%{opacity:0;transform:translateY(22px) scale(.97);}
-  100%{opacity:1;transform:translateY(0) scale(1);}
+.wish-card-foot span{
+  font-size:13px;
+  animation:sparkPulse calc(2s + var(--si,.5s)) ease-in-out infinite;
+}
+@keyframes wishCardIn{
+  0%{opacity:0;transform:translateY(30px) scale(.94) rotateX(6deg);}
+  60%{transform:translateY(-4px) scale(1.01);}
+  100%{opacity:1;transform:translateY(0) scale(1) rotateX(0deg);}
 }
 @keyframes sparkPulse{
-  0%,100%{opacity:.3;transform:scale(1);}
-  50%{opacity:.7;transform:scale(1.18);}
+  0%,100%{opacity:.35;transform:scale(.9);}
+  50%{opacity:.9;transform:scale(1.25);}
 }
-/* wish-section floating butterflies */
-.wish-bf-field{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1;}
-.wbf{position:absolute;pointer-events:none;animation:wbfFloat linear forwards;}
+/* live refresh dot */
+.wish-live{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;margin-top:18px;
+  font-family:'Cinzel',serif;font-size:7px;letter-spacing:2px;
+  color:rgba(201,168,76,.6);
+}
+.wish-live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#c9a84c;
+  box-shadow:0 0 0 0 rgba(201,168,76,.5);
+  animation:livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(201,168,76,.5);}
+  70%{box-shadow:0 0 0 8px rgba(201,168,76,0);}
+  100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}
+}
+/* butterfly field */
+.wish-bf-field{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:4;}
 @keyframes wbfFloat{
-  0%  {opacity:0;transform:translateX(0) translateY(0) rotate(0deg) scale(.7);}
-  8%  {opacity:.75;}
-  50% {opacity:.6;transform:translateX(var(--bx)) translateY(var(--by)) rotate(var(--br)) scale(1);}
-  100%{opacity:0;transform:translateX(var(--bx2)) translateY(var(--by2)) rotate(var(--br2)) scale(.8);}
+  0%  {opacity:0;transform:translateX(0) translateY(0) rotate(0deg) scale(.6);}
+  8%  {opacity:.8;}
+  45% {opacity:.65;}
+  100%{opacity:0;transform:translateX(var(--bx)) translateY(var(--by)) rotate(var(--br)) scale(.75);}
 }
-/* refresh indicator */
-.wish-refresh-ring{
-  width:28px;height:28px;margin:14px auto 0;
-  border-radius:50%;
-  border:2px solid rgba(201,168,76,.25);
-  border-top-color:#c9a84c;
-  animation:wSpin 1.2s linear infinite;
-  display:none;
-}
-@keyframes wSpin{to{transform:rotate(360deg);}}
 
 </style>
 </head>
@@ -843,13 +928,15 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 
 
 <!-- Selembar Kenangan — magical wishes -->
-<section class="sec sec-bg" id="s-kenangan">
+<section class="sec" id="s-kenangan">
+<div id="kStars"></div>
+<div id="wishBf" class="wish-bf-field"></div>
 <span class="slbl rev">— Selembar Kenangan —</span>
 <h2 class="stit rev">Ucapan Tetamu</h2>
 <div class="gl rev"></div>
-<p class="bt rev" style="margin-bottom:18px;">Kata-kata indah dari orang tersayang</p>
+<p class="bt rev" style="margin-bottom:20px;font-style:italic;opacity:.8;">Kata-kata indah dari orang tersayang ✨</p>
 <div id="wishCards" class="wish-cards-wrap"></div>
-<div id="wishBf" class="wish-bf-field"></div>
+<div class="wish-live rev"><div class="wish-live-dot"></div>KEMASKINI SETIAP 30 SAAT</div>
 </section>
 
 <!-- Hadiah -->
@@ -1105,23 +1192,35 @@ async function loadBookedGifts(){
 }
 window.addEventListener('load',loadBookedGifts);
 
-/* ══ SELEMBAR KENANGAN — magical wishes ══ */
+/* ══ SELEMBAR KENANGAN ══ */
 const WISH_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTpNaT_ZU1cIVxwkJnNe8nEVoerbfHsKgbA1o1qqxG8XW8SQYY9MVSjNqnPxRyklJMCSsnWcPnXD-Bw/pub?output=csv";
 const WISH_REFRESH_MS=30000;
-let _wishTimer=null;
-let _lastWishHash="";
+let _wishTimer=null,_lastWishHash="",_wishBfLoop=null;
 
+/* ── star field ── */
+function _buildKStars(){
+  const el=document.getElementById("kStars");
+  if(!el)return;
+  for(let i=0;i<28;i++){
+    const s=document.createElement("div");
+    s.className="kstar";
+    const sz=1.5+Math.random()*2.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;`;
+    s.style.setProperty("--d",(1.5+Math.random()*2.5)+"s");
+    s.style.setProperty("--dl",(Math.random()*2)+"s");
+    el.appendChild(s);
+  }
+}
+
+/* ── CSV parser ── */
 function _parseCSV(raw){
-  /* robust CSV parse — handles quoted commas */
   const rows=[];
   raw.split("\n").slice(1).forEach(line=>{
     if(!line.trim())return;
     const cols=[];let cur="",inQ=false;
     for(let i=0;i<line.length;i++){
       const ch=line[i];
-      if(ch==='"'){inQ=!inQ;}
-      else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}
-      else cur+=ch;
+      if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cols.push(cur.trim());cur="";}else cur+=ch;
     }
     cols.push(cur.trim());
     if(cols[0]&&cols[1])rows.push({name:cols[0].replace(/^"+|"+$/g,""),msg:cols[1].replace(/^"+|"+$/g,"")});
@@ -1129,86 +1228,107 @@ function _parseCSV(raw){
   return rows;
 }
 
+/* ── butterfly spawn ── */
 function _spawnWishBf(){
   const field=document.getElementById("wishBf");
   if(!field||!window.BF_IMGS||!BF_IMGS[0])return;
   const img=document.createElement("img");
   img.src=BF_IMGS[Math.floor(Math.random()*2)];
-  const size=20+Math.random()*22;
-  img.style.cssText=`width:${size}px;height:auto;position:absolute;`;
-  const startX=Math.random()*90;
-  const startY=80+Math.random()*20;
-  img.style.left=startX+"%";
-  img.style.top=startY+"%";
-  const bx=(Math.random()-0.5)*120+"px";
-  const by=-(60+Math.random()*120)+"px";
-  const bx2=(Math.random()-0.5)*160+"px";
-  const by2=-(150+Math.random()*150)+"px";
-  const br=(Math.random()-0.5)*180+"deg";
-  const br2=(Math.random()-0.5)*270+"deg";
+  img.style.position="absolute";
+  const sz=18+Math.random()*26;
+  img.style.width=sz+"px";img.style.height="auto";
+  img.style.left=(5+Math.random()*88)+"%";
+  img.style.top=(10+Math.random()*80)+"%";
+  if(Math.random()>.5)img.style.transform="scaleX(-1)";
+  const bx=((Math.random()-.5)*130)+"px";
+  const by=(-(50+Math.random()*130))+"px";
+  const br=((Math.random()-.5)*200)+"deg";
   img.style.setProperty("--bx",bx);
   img.style.setProperty("--by",by);
-  img.style.setProperty("--bx2",bx2);
-  img.style.setProperty("--by2",by2);
   img.style.setProperty("--br",br);
-  img.style.setProperty("--br2",br2);
-  const dur=4+Math.random()*5;
-  img.style.animation=`wbfFloat ${dur}s ease forwards`;
-  img.style.opacity="0";
-  if(Math.random()>.5)img.style.transform="scaleX(-1)";
+  const dur=3.5+Math.random()*4.5;
+  img.style.animation=`wbfFloat ${dur}s ease-out forwards`;
+  img.style.opacity="0";img.style.pointerEvents="none";
   field.appendChild(img);
-  setTimeout(()=>img.remove(),dur*1000+200);
+  setTimeout(()=>img.remove(),(dur+.3)*1000);
 }
 
+/* ── card renderer ── */
 function _renderWishes(rows){
   const wrap=document.getElementById("wishCards");
   if(!wrap)return;
   const latest=rows.slice(-5).reverse();
   const hash=latest.map(r=>r.name+r.msg).join("|");
-  if(hash===_lastWishHash)return; /* no change */
+  if(hash===_lastWishHash)return;
   _lastWishHash=hash;
 
-  /* fade out existing cards */
-  [...wrap.children].forEach(c=>{c.style.transition="opacity .4s,transform .4s";c.style.opacity="0";c.style.transform="translateY(-10px)";});
-  setTimeout(()=>{
+  const emojis=["🌸","✨","💫","🦋","🌷"];
+  const sparks=[["✨","💫"],["🌸","🌷"],["💫","✨"],["🦋","🌸"],["🌷","💫"]];
+
+  const doRender=()=>{
     wrap.innerHTML="";
     if(!latest.length){
-      wrap.innerHTML='<p style="text-align:center;color:#c9a84c;font-style:italic;font-size:12px;opacity:.7;">Belum ada ucapan lagi…</p>';
+      wrap.innerHTML='<p style="text-align:center;color:#c9a84c;font-style:italic;font-size:13px;padding:30px 0;opacity:.7;">Belum ada ucapan lagi… 🌸</p>';
       return;
     }
     latest.forEach((r,i)=>{
-      const emojis=["✨","🌸","💫","🦋","🌷"];
+      const initial=(r.name||"?")[0].toUpperCase();
       const card=document.createElement("div");
       card.className="wish-card";
-      card.style.animationDelay=(i*0.13)+"s";
-      card.innerHTML=`<div class="wish-card-name">${r.name}</div><div class="wish-card-msg">${r.msg}</div><div class="wish-card-sparkle">${emojis[i%emojis.length]}</div>`;
+      card.style.animationDelay=(i*0.15)+"s";
+      const footEmojis=sparks[i%sparks.length].map((e,j)=>`<span style="--si:${j*0.6}s">${e}</span>`).join("");
+      card.innerHTML=`
+        <div class="wish-q">"</div>
+        <div class="wish-card-inner">
+          <div class="wish-card-header">
+            <div class="wish-card-avatar">${initial}</div>
+            <div class="wish-card-name">${r.name}</div>
+          </div>
+          <div class="wish-divider"></div>
+          <div class="wish-card-msg">${r.msg}</div>
+          <div class="wish-card-foot">${footEmojis}</div>
+        </div>`;
       wrap.appendChild(card);
     });
-    /* spawn butterflies on each refresh */
-    for(let n=0;n<6;n++)setTimeout(_spawnWishBf,n*420);
-  },400);
+    for(let n=0;n<8;n++)setTimeout(_spawnWishBf,n*350);
+  };
+
+  if(wrap.children.length){
+    [...wrap.children].forEach(c=>{
+      c.style.transition="opacity .4s ease,transform .4s ease";
+      c.style.opacity="0";c.style.transform="scale(.95)";
+    });
+    setTimeout(doRender,440);
+  } else doRender();
 }
 
+/* ── fetch ── */
 async function loadWishes(){
   try{
-    const r=await fetch(WISH_CSV+"&t="+Date.now());
+    const r=await fetch(WISH_CSV+"&_="+Date.now());
     const t=await r.text();
     _renderWishes(_parseCSV(t));
   }catch(e){}
 }
 
+/* ── ambient butterflies when section visible ── */
+function _ambientBf(){
+  const sec=document.getElementById("s-kenangan");
+  if(!sec)return;
+  const rect=sec.getBoundingClientRect();
+  if(rect.top<window.innerHeight+80&&rect.bottom>0){
+    _spawnWishBf();
+    setTimeout(_spawnWishBf,700);
+  }
+}
+
 function _startWishRefresh(){
+  _buildKStars();
   loadWishes();
   if(_wishTimer)clearInterval(_wishTimer);
   _wishTimer=setInterval(loadWishes,WISH_REFRESH_MS);
-  /* spawn ambient butterflies every 7s */
-  setInterval(()=>{
-    const sec=document.getElementById("s-kenangan");
-    if(sec&&sec.getBoundingClientRect().top<window.innerHeight+100){
-      _spawnWishBf();
-      setTimeout(_spawnWishBf,600);
-    }
-  },7000);
+  if(_wishBfLoop)clearInterval(_wishBfLoop);
+  _wishBfLoop=setInterval(_ambientBf,6000);
 }
 
 window.addEventListener("load",_startWishRefresh);
