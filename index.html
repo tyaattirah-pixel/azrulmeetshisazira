@@ -1022,7 +1022,7 @@ function updateCD(){
 setInterval(updateCD,1000);updateCD();
 
 /* ── PREWEDDING GALLERY ── */
-(function(){
+window.addEventListener("load",function(){
   const pwPhotos=['Prewed1.jpeg','Prewed2.jpeg','Prewed3.jpeg','Prewed4.jpeg',
     'Prewed5.JPG','Prewed6.JPG','Prewed9.JPG','Prewed11.JPG','Prewed12.JPG','Prewed13.JPG'];
   /* Fisher-Yates shuffle — different order every page visit */
@@ -1050,7 +1050,7 @@ setInterval(updateCD,1000);updateCD();
   }
   if(pwImg){pwImg.src=pwPhotos[0];pwImg.style.objectPosition=/prewed7/i.test(pwPhotos[0])?'center top':'';}
   if(pwPhotos.length>1)setInterval(()=>pwGo(pwCur+1),4000);
-})();
+});
 
 /* ── WISHLIST ── */
 const GAS_WISH='https://script.google.com/macros/s/AKfycbyGyTjGCr_QlhQsFQPIoOiHJFcskj_eL8PlUhJBeeLBM8urao_y1Yoid6RD2USxvgsu3g/exec';
