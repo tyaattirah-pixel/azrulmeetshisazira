@@ -696,8 +696,6 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
   <div class="spark" style="width:2px;height:2px;top:19%;left:61%;animation:twk 2.5s infinite .5s;"></div>
   <div class="spark" style="width:3px;height:3px;top:15%;left:41%;animation:twk 1.9s infinite .3s;"></div>
 
-  <div class="hb" style="top:55%;left:4%;transform:scale(.48)rotate(-12deg);opacity:.45;"><div class="b gd" style="width:48px;height:40px;"><div class="wl" style="width:21px;height:27px;animation-duration:.5s;"></div><div class="wr" style="width:21px;height:27px;left:23px;animation-duration:.5s;"></div><div class="bd" style="width:3px;height:27px;"></div></div></div>
-  <div class="hb" style="top:60%;right:5%;transform:scale(.56)rotate(10deg);opacity:.4;"><div class="b gd" style="width:48px;height:40px;"><div class="wl" style="width:21px;height:27px;animation-duration:.48s;"></div><div class="wr" style="width:21px;height:27px;left:23px;animation-duration:.48s;"></div><div class="bd" style="width:3px;height:27px;"></div></div></div>
 
   <div id="hero-text">
     <span class="h-top">MENANTI HARI BAHAGIA</span>
@@ -819,7 +817,6 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 
 <!-- Selembar Kenangan — magical wishes -->
 <section class="sec sec-bg" id="s-kenangan">
-<div id="kStars"></div>
 <div id="wishBf" class="wish-bf-field"></div>
 <span class="slbl rev">— Selembar Kenangan —</span>
 <h2 class="stit rev">Ucapan Tetamu</h2>
@@ -1109,20 +1106,6 @@ const WISH_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTpNaT_ZU1cIVxwk
 const WISH_REFRESH_MS=30000;
 let _wishTimer=null,_wishBfLoop=null;
 
-/* ── star field ── */
-function _buildKStars(){
-  const el=document.getElementById("kStars");
-  if(!el)return;
-  for(let i=0;i<28;i++){
-    const s=document.createElement("div");
-    s.className="kstar";
-    const sz=1.5+Math.random()*2.5;
-    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;`;
-    s.style.setProperty("--d",(1.5+Math.random()*2.5)+"s");
-    s.style.setProperty("--dl",(Math.random()*2)+"s");
-    el.appendChild(s);
-  }
-}
 
 /* ── CSV parser ── */
 function _parseCSV(raw){
@@ -1221,7 +1204,6 @@ function _ambientBf(){
 }
 
 function _startWishRefresh(){
-  _buildKStars();
   loadWishes();
   if(_wishTimer)clearInterval(_wishTimer);
   _wishTimer=setInterval(loadWishes,WISH_REFRESH_MS);
