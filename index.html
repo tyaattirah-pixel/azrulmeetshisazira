@@ -84,9 +84,8 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 ══════════════════════════════ */
 #page-door{
   position:fixed;inset:0;z-index:500;
-  height:100vh;
-  height:-webkit-fill-available;
   height:100dvh;
+  min-height:100%;
   display:none;
   overflow:hidden;
 }
@@ -295,7 +294,7 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 }
 .gallery-slide.active{opacity:1;}
 .gallery-slide img{width:100%;height:100%;object-fit:cover;display:block;}
-#pwImg{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:opacity .7s ease;}
+#pwImg{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .7s ease;}
 #pwImg.pw-fade{opacity:0;}
 .gallery-dots{display:flex;justify-content:center;gap:8px;margin-top:4px;}
 .gallery-dot{
@@ -437,6 +436,14 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
   .cgrid{grid-template-columns:1fr 1fr;}
   .h-bride,.h-groom{font-size:clamp(28px,10vw,46px);}
   .cd-box{width:46px;}
+}
+@media(max-height:680px){
+  #hero-text{padding:14px 16px 50px!important;}
+  .h-bride,.h-groom{font-size:clamp(24px,9vw,46px)!important;}
+  .h-dan{margin:2px 0!important;font-size:clamp(18px,5vw,32px)!important;}
+  .h-date{margin-top:8px!important;}
+  .h-datenum{font-size:clamp(42px,12vw,72px)!important;}
+  .teruskan-btn{margin-top:10px!important;padding:10px 24px!important;}
 }
 
 /* ══ RSVP MODAL ══ */
@@ -735,6 +742,17 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 </div>
 </section>
 
+<!-- Meet the Couple — Prewedding Gallery -->
+<section class="sec" id="s-prewed">
+  <span class="slbl rev">— Meet the Couple —</span>
+  <h2 class="stit rev">Meet the Couple</h2>
+  <div class="gl rev"></div>
+  <div class="photo-gallery rev" id="prewGallery">
+    <img id="pwImg" alt="Prewedding">
+  </div>
+  <div class="gallery-dots" id="pw-dots"></div>
+</section>
+
 <!-- Kalendar + Countdown -->
 <section class="sec sec-bg" id="s-date">
   <span class="slbl rev">— Tarikh &amp; Masa —</span>
@@ -802,17 +820,6 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 <button class="goldbtn rev" onclick="openRsvp()" style="border:none;cursor:pointer;">ISI RSVP</button>
 </section>
 
-
-<!-- Foto Kenangan — Prewedding Gallery -->
-<section class="sec" id="s-prewed">
-  <span class="slbl rev">— Foto Kenangan —</span>
-  <h2 class="stit rev">Prewedding</h2>
-  <div class="gl rev"></div>
-  <div class="photo-gallery rev" id="prewGallery">
-    <img id="pwImg" alt="Prewedding">
-  </div>
-  <div class="gallery-dots" id="pw-dots"></div>
-</section>
 
 <!-- Selembar Kenangan — magical wishes -->
 <section class="sec" id="s-kenangan">
@@ -1038,10 +1045,10 @@ setInterval(updateCD,1000);updateCD();
     if(dots[pwCur])dots[pwCur].classList.remove('on');
     pwCur=(n+pwPhotos.length)%pwPhotos.length;
     pwImg.classList.add('pw-fade');
-    setTimeout(()=>{pwImg.src=pwPhotos[pwCur];pwImg.classList.remove('pw-fade');},700);
+    setTimeout(()=>{pwImg.src=pwPhotos[pwCur];pwImg.style.objectPosition=/prewed7/i.test(pwPhotos[pwCur])?'center top':'';pwImg.classList.remove('pw-fade');},700);
     if(dots[pwCur])dots[pwCur].classList.add('on');
   }
-  if(pwImg)pwImg.src=pwPhotos[0];
+  if(pwImg){pwImg.src=pwPhotos[0];pwImg.style.objectPosition=/prewed7/i.test(pwPhotos[0])?'center top':'';}
   if(pwPhotos.length>1)setInterval(()=>pwGo(pwCur+1),4000);
 })();
 
@@ -1104,7 +1111,7 @@ window.addEventListener('load',loadBookedGifts);
 /* ══ SELEMBAR KENANGAN ══ */
 const WISH_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTpNaT_ZU1cIVxwkJnNe8nEVoerbfHsKgbA1o1qqxG8XW8SQYY9MVSjNqnPxRyklJMCSsnWcPnXD-Bw/pub?output=csv";
 const WISH_REFRESH_MS=30000;
-let _wishTimer=null,_lastWishHash=null,_wishBfLoop=null;
+let _wishTimer=null,_wishBfLoop=null;
 
 /* ── star field ── */
 function _buildKStars(){
@@ -1166,10 +1173,7 @@ function _spawnWishBf(){
 function _renderWishes(rows){
   const wrap=document.getElementById("wishCards");
   if(!wrap)return;
-  const latest=rows.slice(-5).reverse();
-  const hash=latest.map(r=>r.name+r.msg).join("|");
-  if(hash===_lastWishHash)return;
-  _lastWishHash=hash;
+  const latest=rows.slice(-10).reverse();
 
   const doRender=()=>{
     wrap.innerHTML="";
