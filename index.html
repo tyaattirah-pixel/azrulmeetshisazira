@@ -1077,10 +1077,10 @@ async function submitBooking(){
     fetch('https://docs.google.com/forms/d/e/1FAIpQLSdxGDNrb4qh5Z0HhJKBxhtt1uZLutuICnayzterx3wDG-IMEA/formResponse',{method:'POST',mode:'no-cors',body:_bf}).catch(()=>{});
   }catch(e){}
   if(_bookCard){
-    _bookCard.setAttribute('data-booker','Telah Ditempah\noleh '+nama);
+    _bookCard.setAttribute('data-booker','Telah ditempah oleh '+nama);
     _bookCard.classList.add('booked');
     const sv=JSON.parse(localStorage.getItem('bookedGifts')||'[]');
-    if(!sv.includes(_bookItem)){sv.push(_bookItem);localStorage.setItem('bookedGifts',JSON.stringify(sv));}
+    if(!sv.find(x=>x.item===_bookItem)){sv.push({item:_bookItem,nama});localStorage.setItem('bookedGifts',JSON.stringify(sv));}
   }
   btn.disabled=false;btn.textContent='TEMPAH HADIAH INI';
   document.getElementById('book-main').style.display='none';
@@ -1092,11 +1092,14 @@ async function loadBookedGifts(){
     const data=await r.json();
     data.booked.forEach(b=>{
       const card=document.querySelector('.wcard[data-gift="'+b.item+'"]');
-      if(card){card.setAttribute('data-booker','Telah Ditempah\noleh '+b.nama);card.classList.add('booked');}
+      if(card){card.setAttribute('data-booker','Telah ditempah oleh '+b.nama);card.classList.add('booked');}
     });
   }catch(e){
     const sv=JSON.parse(localStorage.getItem('bookedGifts')||'[]');
-    document.querySelectorAll('.wcard').forEach(c=>{if(sv.includes(c.dataset.gift)){c.setAttribute('data-booker','Telah\nDitempah');c.classList.add('booked');}});
+    document.querySelectorAll('.wcard').forEach(c=>{
+      const found=sv.find(x=>x.item===c.dataset.gift);
+      if(found){c.setAttribute('data-booker','Telah ditempah oleh '+found.nama);c.classList.add('booked');}
+    });
   }
 }
 window.addEventListener('load',loadBookedGifts);
@@ -1152,7 +1155,7 @@ function _spawnWishBf(){
 function _renderWishes(rows){
   const wrap=document.getElementById("wishCards");
   if(!wrap)return;
-  const latest=rows.slice(-10).reverse();
+  const latest=rows.slice(-5).reverse();
 
   const doRender=()=>{
     wrap.innerHTML="";
