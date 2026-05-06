@@ -84,8 +84,6 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 ══════════════════════════════ */
 #page-door{
   position:fixed;inset:0;z-index:500;
-  height:100dvh;
-  min-height:100%;
   display:none;
   overflow:hidden;
 }
@@ -154,7 +152,7 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;font-family:'EB Garamond'
 #hero-text{
   position:absolute;inset:0;z-index:15;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:48px 20px 130px;
+  padding:48px 20px max(130px,calc(80px + env(safe-area-inset-bottom,50px)));
   opacity:0;
   transition:opacity 1.4s ease 1.6s;
   text-align:center;
@@ -890,12 +888,17 @@ let musicOn=false,opened=false,_ytPlayer=null,_ytReady=false,_ytQueued=false;
 function onYouTubeIframeAPIReady(){
   _ytPlayer=new YT.Player('ytf',{
     videoId:YT_VID,
-    playerVars:{autoplay:0,controls:0,loop:1,playlist:YT_VID,rel:0,playsinline:1,mute:1},
-    events:{onReady:function(){_ytReady=true;if(_ytQueued){_doPlay();} }}
+    playerVars:{autoplay:1,controls:0,loop:1,playlist:YT_VID,rel:0,playsinline:1,mute:1},
+    events:{onReady:function(e){
+      _ytReady=true;
+      e.target.mute();e.target.playVideo(); /* muted autoplay — Safari allows this */
+      if(_ytQueued){_doPlay();}
+    }}
   });
 }
 function _doPlay(){
-  _ytPlayer.unMute();_ytPlayer.setVolume(80);_ytPlayer.playVideo();musicOn=true;
+  _ytPlayer.unMute();_ytPlayer.setVolume(80);_ytPlayer.playVideo();
+  musicOn=true;document.getElementById('mbtn').classList.remove('off');
 }
 
 /* ── PAGE 2 OPEN ── */
@@ -1077,7 +1080,7 @@ async function submitBooking(){
     fetch('https://docs.google.com/forms/d/e/1FAIpQLSdxGDNrb4qh5Z0HhJKBxhtt1uZLutuICnayzterx3wDG-IMEA/formResponse',{method:'POST',mode:'no-cors',body:_bf}).catch(()=>{});
   }catch(e){}
   if(_bookCard){
-    _bookCard.setAttribute('data-booker','TELAH DITEMPAH OLEH '+nama);
+    _bookCard.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+nama.toUpperCase());
     _bookCard.classList.add('booked');
     const sv=JSON.parse(localStorage.getItem('bookedGifts')||'[]');
     if(!sv.find(x=>x.item===_bookItem)){sv.push({item:_bookItem,nama});localStorage.setItem('bookedGifts',JSON.stringify(sv));}
@@ -1088,17 +1091,17 @@ async function submitBooking(){
 }
 async function loadBookedGifts(){
   try{
-    const r=await fetch(GAS_WISH);
+    const r=await fetch(GAS_WISH+'?_='+Date.now());
     const data=await r.json();
     data.booked.forEach(b=>{
       const card=document.querySelector('.wcard[data-gift="'+b.item+'"]');
-      if(card){card.setAttribute('data-booker','TELAH DITEMPAH OLEH '+b.nama);card.classList.add('booked');}
+      if(card){card.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+b.nama.toUpperCase());card.classList.add('booked');}
     });
   }catch(e){
     const sv=JSON.parse(localStorage.getItem('bookedGifts')||'[]');
     document.querySelectorAll('.wcard').forEach(c=>{
       const found=sv.find(x=>x.item===c.dataset.gift);
-      if(found){c.setAttribute('data-booker','TELAH DITEMPAH OLEH '+found.nama);c.classList.add('booked');}
+      if(found){c.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+found.nama.toUpperCase());c.classList.add('booked');}
     });
   }
 }
