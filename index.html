@@ -1089,23 +1089,34 @@ async function submitBooking(){
   document.getElementById('book-main').style.display='none';
   document.getElementById('book-success').style.display='block';
 }
-async function loadBookedGifts(){
+async function _applyBooked(list){
+  list.forEach(b=>{
+    const card=document.querySelector('.wcard[data-gift="'+b.item+'"]');
+    if(card){card.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+b.nama.toUpperCase());card.classList.add('booked');}
+  });
+}
+async function loadBookedGifts(retry=3){
   try{
-    const r=await fetch(GAS_WISH+'?_='+Date.now());
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),6000);
+    const r=await fetch(GAS_WISH+'?_='+Date.now(),{signal:ctrl.signal});
+    clearTimeout(tid);
+    if(!r.ok)throw new Error('HTTP '+r.status);
     const data=await r.json();
-    data.booked.forEach(b=>{
-      const card=document.querySelector('.wcard[data-gift="'+b.item+'"]');
-      if(card){card.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+b.nama.toUpperCase());card.classList.add('booked');}
-    });
+    const list=data.booked||[];
+    _applyBooked(list);
+    /* keep localStorage in sync so same-browser offline fallback has names */
+    localStorage.setItem('bookedGifts',JSON.stringify(list.map(b=>({item:b.item,nama:b.nama}))));
   }catch(e){
+    if(retry>0){setTimeout(()=>loadBookedGifts(retry-1),3000);return;}
+    /* final fallback: localStorage (same browser only) */
     const sv=JSON.parse(localStorage.getItem('bookedGifts')||'[]');
-    document.querySelectorAll('.wcard').forEach(c=>{
-      const found=sv.find(x=>x.item===c.dataset.gift);
-      if(found){c.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+found.nama.toUpperCase());c.classList.add('booked');}
-    });
+    _applyBooked(sv);
   }
 }
 window.addEventListener('load',loadBookedGifts);
+/* re-check whenever the tab regains focus — picks up bookings made in other browsers */
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadBookedGifts();});
 
 /* ══ SELEMBAR KENANGAN ══ */
 const WISH_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTpNaT_ZU1cIVxwkJnNe8nEVoerbfHsKgbA1o1qqxG8XW8SQYY9MVSjNqnPxRyklJMCSsnWcPnXD-Bw/pub?output=csv";
