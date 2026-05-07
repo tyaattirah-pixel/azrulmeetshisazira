@@ -1089,7 +1089,8 @@ async function submitBooking(){
   document.getElementById('book-main').style.display='none';
   document.getElementById('book-success').style.display='block';
 }
-const BOOKING_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vQia8_7x4ARFg99JvfO3F60dLHW511JqrVm6EFnimjjNOkM2CihEOx4c-ROMYxkyCox7q4YFsWvYCK-/pub?output=csv';
+/* GViz endpoint reads the sheet in real-time (no CDN cache unlike pub?output=csv) */
+const BOOKING_CSV='https://docs.google.com/spreadsheets/d/16L_KY9XF10RjUdzdaJLMGkKgMzXXKZFmbZi42kID_14/gviz/tq?tqx=out:csv&gid=762964442';
 
 const KNOWN_GIFTS=['Rice Cooker','Air Fryer','Microwave','Kitchen Cooker'];
 
@@ -1149,7 +1150,11 @@ async function loadBookedGifts(){
     _applyBooked(JSON.parse(localStorage.getItem('bookedGifts')||'[]'));
   }
 }
-window.addEventListener('load',loadBookedGifts);
+window.addEventListener('load',()=>{
+  loadBookedGifts();
+  setTimeout(loadBookedGifts,4000);  /* retry — overcomes any residual cache */
+  setTimeout(loadBookedGifts,12000);
+});
 /* re-check whenever tab regains focus */
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadBookedGifts();});
 
