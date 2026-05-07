@@ -1089,8 +1089,7 @@ async function submitBooking(){
   document.getElementById('book-main').style.display='none';
   document.getElementById('book-success').style.display='block';
 }
-/* GViz endpoint reads the sheet in real-time (no CDN cache unlike pub?output=csv) */
-const BOOKING_CSV='https://docs.google.com/spreadsheets/d/16L_KY9XF10RjUdzdaJLMGkKgMzXXKZFmbZi42kID_14/gviz/tq?tqx=out:csv&gid=762964442';
+const BOOKING_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vQia8_7x4ARFg99JvfO3F60dLHW511JqrVm6EFnimjjNOkM2CihEOx4c-ROMYxkyCox7q4YFsWvYCK-/pub?output=csv';
 
 const KNOWN_GIFTS=['Rice Cooker','Air Fryer','Microwave','Kitchen Cooker'];
 
@@ -1138,7 +1137,7 @@ async function _applyBooked(list){
 }
 async function loadBookedGifts(){
   try{
-    const r=await fetch(BOOKING_CSV+'&_='+Date.now());
+    const r=await fetch(BOOKING_CSV+'&_='+Date.now(),{cache:'no-store'});
     console.log('[Booking] fetch status:',r.status,r.ok);
     if(!r.ok)throw new Error('HTTP '+r.status);
     const text=await r.text();
