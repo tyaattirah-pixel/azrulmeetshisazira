@@ -1089,33 +1089,56 @@ async function submitBooking(){
   document.getElementById('book-main').style.display='none';
   document.getElementById('book-success').style.display='block';
 }
+const BOOKING_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vQia8_7x4ARFg99JvfO3F60dLHW511JqrVm6EFnimjjNOkM2CihEOx4c-ROMYxkyCox7q4YFsWvYCK-/pub?output=csv';
+
+function _parseBookingCSV(raw){
+  const lines=raw.trim().split('\n');
+  if(lines.length<2)return[];
+  /* detect columns from header row */
+  const hdr=lines[0].toLowerCase();
+  const cols=hdr.split(',').map(c=>c.replace(/"/g,'').trim());
+  let itemCol=1,namaCol=2; /* default: Timestamp,Item,Nama */
+  cols.forEach((c,i)=>{
+    if(/item|hadiah|gift/i.test(c))itemCol=i;
+    if(/nama|name|booker/i.test(c))namaCol=i;
+  });
+  const result=[];
+  lines.slice(1).forEach(line=>{
+    if(!line.trim())return;
+    const parts=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){parts.push(cur.trim());cur='';}else cur+=ch;
+    }
+    parts.push(cur.trim());
+    const item=(parts[itemCol]||'').replace(/^"+|"+$/g,'').trim();
+    const nama=(parts[namaCol]||'').replace(/^"+|"+$/g,'').trim();
+    if(item&&nama)result.push({item,nama});
+  });
+  return result;
+}
+
 async function _applyBooked(list){
   list.forEach(b=>{
     const card=document.querySelector('.wcard[data-gift="'+b.item+'"]');
     if(card){card.setAttribute('data-booker','TELAH DITEMPAH\nOLEH '+b.nama.toUpperCase());card.classList.add('booked');}
   });
 }
-async function loadBookedGifts(retry=3){
+async function loadBookedGifts(){
   try{
-    const ctrl=new AbortController();
-    const tid=setTimeout(()=>ctrl.abort(),6000);
-    const r=await fetch(GAS_WISH+'?_='+Date.now(),{signal:ctrl.signal});
-    clearTimeout(tid);
+    const r=await fetch(BOOKING_CSV+'&_='+Date.now());
     if(!r.ok)throw new Error('HTTP '+r.status);
-    const data=await r.json();
-    const list=data.booked||[];
+    const text=await r.text();
+    const list=_parseBookingCSV(text);
     _applyBooked(list);
-    /* keep localStorage in sync so same-browser offline fallback has names */
-    localStorage.setItem('bookedGifts',JSON.stringify(list.map(b=>({item:b.item,nama:b.nama}))));
+    localStorage.setItem('bookedGifts',JSON.stringify(list));
   }catch(e){
-    if(retry>0){setTimeout(()=>loadBookedGifts(retry-1),3000);return;}
-    /* final fallback: localStorage (same browser only) */
-    const sv=JSON.parse(localStorage.getItem('bookedGifts')||'[]');
-    _applyBooked(sv);
+    /* fallback: localStorage (same browser only) */
+    _applyBooked(JSON.parse(localStorage.getItem('bookedGifts')||'[]'));
   }
 }
 window.addEventListener('load',loadBookedGifts);
-/* re-check whenever the tab regains focus — picks up bookings made in other browsers */
+/* re-check whenever tab regains focus */
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadBookedGifts();});
 
 /* ══ SELEMBAR KENANGAN ══ */
