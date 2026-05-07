@@ -1091,30 +1091,41 @@ async function submitBooking(){
 }
 const BOOKING_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vQia8_7x4ARFg99JvfO3F60dLHW511JqrVm6EFnimjjNOkM2CihEOx4c-ROMYxkyCox7q4YFsWvYCK-/pub?output=csv';
 
+const KNOWN_GIFTS=['Rice Cooker','Air Fryer','Microwave','Kitchen Cooker'];
+
+function _splitCSVLine(line){
+  const parts=[];let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){parts.push(cur.replace(/^"+|"+$/g,'').trim());cur='';}else cur+=ch;
+  }
+  parts.push(cur.replace(/^"+|"+$/g,'').trim());
+  return parts;
+}
+
 function _parseBookingCSV(raw){
   const lines=raw.trim().split('\n');
-  if(lines.length<2)return[];
-  /* detect columns from header row */
-  const hdr=lines[0].toLowerCase();
-  const cols=hdr.split(',').map(c=>c.replace(/"/g,'').trim());
-  let itemCol=1,namaCol=2; /* default: Timestamp,Item,Nama */
-  cols.forEach((c,i)=>{
-    if(/item|hadiah|gift/i.test(c))itemCol=i;
-    if(/nama|name|booker/i.test(c))namaCol=i;
-  });
+  console.log('[Booking CSV] rows:',lines.length,'raw preview:',lines.slice(0,3).join(' | '));
   const result=[];
+  /* skip header row (i=0), scan every data row */
   lines.slice(1).forEach(line=>{
     if(!line.trim())return;
-    const parts=[];let cur='',inQ=false;
-    for(let i=0;i<line.length;i++){
-      const ch=line[i];
-      if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){parts.push(cur.trim());cur='';}else cur+=ch;
-    }
-    parts.push(cur.trim());
-    const item=(parts[itemCol]||'').replace(/^"+|"+$/g,'').trim();
-    const nama=(parts[namaCol]||'').replace(/^"+|"+$/g,'').trim();
-    if(item&&nama)result.push({item,nama});
+    const cells=_splitCSVLine(line);
+    /* find which cell is a known gift item */
+    let item=null,nama=null;
+    cells.forEach(c=>{
+      if(KNOWN_GIFTS.includes(c))item=c;
+    });
+    if(!item)return;
+    /* nama = first non-empty, non-timestamp, non-item cell */
+    cells.forEach(c=>{
+      if(!c||c===item)return;
+      if(/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(c))return; /* skip timestamps */
+      if(!nama)nama=c;
+    });
+    if(item&&nama){result.push({item,nama});}
   });
+  console.log('[Booking CSV] parsed:',JSON.stringify(result));
   return result;
 }
 
@@ -1127,13 +1138,14 @@ async function _applyBooked(list){
 async function loadBookedGifts(){
   try{
     const r=await fetch(BOOKING_CSV+'&_='+Date.now());
+    console.log('[Booking] fetch status:',r.status,r.ok);
     if(!r.ok)throw new Error('HTTP '+r.status);
     const text=await r.text();
     const list=_parseBookingCSV(text);
     _applyBooked(list);
     localStorage.setItem('bookedGifts',JSON.stringify(list));
   }catch(e){
-    /* fallback: localStorage (same browser only) */
+    console.warn('[Booking] fetch failed, using localStorage:',e.message);
     _applyBooked(JSON.parse(localStorage.getItem('bookedGifts')||'[]'));
   }
 }
